@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf7f2;
+  --foreground: #1f2a24;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* OperIA brand palette */
+  --color-beige: #faf7f2;
+  --color-beige-deep: #f1ebe1;
+  --color-forest: #4a7c59;
+  --color-forest-dark: #3c6649;
+  --color-forest-soft: #e8f0ea;
+  --color-ink: #1f2a24;
+  --color-muted: #5d6b62;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
