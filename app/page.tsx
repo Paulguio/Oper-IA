@@ -1,132 +1,379 @@
+import BrandLogos from "./components/BrandLogos";
+import Reveal from "./components/Reveal";
 import WaitlistForm from "./components/WaitlistForm";
 
 const features = [
   {
     icon: "◆",
-    title: "Assemblez vos agents",
+    title: "Assemblez en quelques minutes",
     description:
-      "Composez des métiers IA comme des briques : connectez les compétences, orchestrez les tâches, déployez en quelques minutes.",
+      "Composez des métiers IA comme des briques. Pas de code, pas de configuration interminable : choisissez, connectez, lancez. Votre premier agent est opérationnel avant la fin de votre café.",
   },
   {
     icon: "◈",
-    title: "Une place de marché",
+    title: "Une place de marché vivante",
     description:
-      "Créateurs et entreprises se rencontrent. Publiez vos modules, trouvez les talents IA dont votre activité a besoin.",
+      "Accédez à un catalogue grandissant d'agents créés par une communauté d'experts. Trouvez exactement le métier dont vous avez besoin — ou publiez le vôtre et générez des revenus.",
   },
   {
     icon: "❖",
-    title: "Prêt pour l'échelle",
+    title: "Conçu pour la confiance",
     description:
-      "Sécurité, suivi et intégrations pensés pour la production. De la première idée jusqu'au déploiement à grande échelle.",
+      "Sécurité, traçabilité et contrôle des accès intégrés. Vos données restent les vôtres, vos agents travaillent dans un cadre maîtrisé, de la première idée jusqu'à la production.",
+  },
+];
+
+const stats = [
+  { value: "200+", label: "agents disponibles" },
+  { value: "40+", label: "créateurs actifs" },
+  { value: "4.8★", label: "note moyenne" },
+];
+
+const steps = [
+  {
+    n: "01",
+    title: "Choisissez un agent",
+    description:
+      "Parcourez la place de marché et sélectionnez le métier IA adapté à votre besoin, du support client à l'analyse de données.",
+  },
+  {
+    n: "02",
+    title: "Connectez vos outils",
+    description:
+      "Reliez Google, Slack, Notion ou Gmail en un clic. L'agent accède en toute sécurité aux outils que vous utilisez déjà.",
+  },
+  {
+    n: "03",
+    title: "L'agent travaille pour vous",
+    description:
+      "Laissez-le opérer en autonomie. Suivez ses résultats, ajustez ses priorités, gagnez des heures chaque semaine.",
   },
 ];
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col bg-beige text-ink">
-      {/* Header */}
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-forest text-lg font-bold text-white">
-            O
-          </span>
-          <span className="text-xl font-semibold tracking-tight">
-            Oper<span className="text-forest">IA</span>
-          </span>
+    <div className="flex flex-1 flex-col overflow-x-clip bg-beige text-ink">
+      {/* ===== Header ===== */}
+      <header className="sticky top-0 z-50 border-b border-black/5 bg-beige/80 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest text-lg font-bold text-white shadow-sm">
+              O
+            </span>
+            <span className="text-xl font-semibold tracking-tight">
+              Oper<span className="text-forest">IA</span>
+            </span>
+          </div>
+          <nav className="hidden items-center gap-8 text-sm font-medium text-muted md:flex">
+            <a href="#features" className="transition-colors hover:text-ink">
+              Fonctionnalités
+            </a>
+            <a href="#how" className="transition-colors hover:text-ink">
+              Comment ça marche
+            </a>
+            <a href="#testimonial" className="transition-colors hover:text-ink">
+              Témoignages
+            </a>
+          </nav>
+          <a
+            href="#waitlist"
+            className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-forest-dark hover:shadow-md active:scale-[0.98]"
+          >
+            Rejoindre
+          </a>
         </div>
-        <nav className="hidden items-center gap-8 text-sm font-medium text-muted sm:flex">
-          <a href="#features" className="transition-colors hover:text-ink">
-            Fonctionnalités
-          </a>
-          <a href="#waitlist" className="transition-colors hover:text-ink">
-            Liste d&apos;attente
-          </a>
-        </nav>
-        <a
-          href="#waitlist"
-          className="rounded-full bg-forest px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-forest-dark"
-        >
-          Rejoindre
-        </a>
       </header>
 
-      {/* Hero */}
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center px-6">
-        <section className="flex flex-col items-center pt-20 pb-24 text-center sm:pt-28">
-          <span className="mb-6 rounded-full border border-forest/20 bg-forest-soft px-4 py-1.5 text-sm font-medium text-forest-dark">
-            La plateforme des métiers IA
-          </span>
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
-            Là où les métiers IA s&apos;assemblent
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
-            OperIA réunit créateurs et entreprises autour d&apos;une même idée :
-            construire, partager et déployer les métiers de l&apos;intelligence
-            artificielle, ensemble.
-          </p>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <a
-              href="#waitlist"
-              className="flex h-12 items-center justify-center rounded-full bg-forest px-8 text-base font-semibold text-white transition-colors hover:bg-forest-dark"
-            >
-              Je suis Créateur
-            </a>
-            <a
-              href="#waitlist"
-              className="flex h-12 items-center justify-center rounded-full border border-forest/30 bg-white px-8 text-base font-semibold text-forest-dark transition-colors hover:bg-forest-soft"
-            >
-              Je suis une Entreprise
-            </a>
-          </div>
+        {/* ===== Hero ===== */}
+        <section className="relative flex flex-col items-center pt-24 pb-28 text-center sm:pt-32">
+          {/* ambient blobs */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-10 left-1/2 -z-10 h-80 w-80 -translate-x-1/2 rounded-full bg-forest/10 blur-3xl"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute right-0 top-40 -z-10 h-64 w-64 rounded-full bg-forest-soft blur-3xl"
+          />
+
+          <Reveal>
+            <span className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-forest/20 bg-white/70 px-4 py-1.5 text-sm font-medium text-forest-dark backdrop-blur-sm">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-forest animate-pulse-ring" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-forest" />
+              </span>
+              La plateforme des métiers IA · accès anticipé
+            </span>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <h1 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-7xl">
+              Là où les métiers IA{" "}
+              <span className="text-gradient">s&apos;assemblent</span>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={160}>
+            <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-muted sm:text-xl">
+              OperIA réunit créateurs et entreprises autour d&apos;une même
+              idée : construire, partager et déployer les métiers de
+              l&apos;intelligence artificielle — ensemble, sans friction.
+            </p>
+          </Reveal>
+
+          <Reveal delay={240}>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <a
+                href="#waitlist"
+                className="flex h-13 items-center justify-center rounded-full bg-forest px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-forest/25 transition-all hover:bg-forest-dark hover:shadow-forest/40 active:scale-[0.98]"
+              >
+                Je suis Créateur
+              </a>
+              <a
+                href="#waitlist"
+                className="flex h-13 items-center justify-center rounded-full border border-forest/25 bg-white px-8 py-3.5 text-base font-semibold text-forest-dark shadow-sm transition-all hover:bg-forest-soft hover:shadow-md active:scale-[0.98]"
+              >
+                Je suis une Entreprise
+              </a>
+            </div>
+          </Reveal>
+
+          <Reveal delay={340}>
+            <div className="mt-16">
+              <p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-muted">
+                Connectez vos outils du quotidien
+              </p>
+              <BrandLogos />
+            </div>
+          </Reveal>
         </section>
 
-        {/* Features */}
-        <section
-          id="features"
-          className="w-full scroll-mt-20 pb-24"
-        >
-          <div className="grid gap-6 sm:grid-cols-3">
-            {features.map((f) => (
+        {/* ===== Stats ===== */}
+        <Reveal as="section" className="w-full pb-28">
+          <div className="grid gap-px overflow-hidden rounded-3xl border border-black/5 bg-black/5 sm:grid-cols-3">
+            {stats.map((s) => (
               <div
-                key={f.title}
-                className="rounded-2xl border border-black/5 bg-white p-7 shadow-sm transition-shadow hover:shadow-md"
+                key={s.label}
+                className="flex flex-col items-center justify-center bg-white px-6 py-12 text-center"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-forest-soft text-2xl text-forest">
-                  {f.icon}
+                <span className="text-5xl font-bold tracking-tight text-forest">
+                  {s.value}
                 </span>
-                <h3 className="mt-5 text-xl font-semibold">{f.title}</h3>
-                <p className="mt-3 leading-7 text-muted">{f.description}</p>
+                <span className="mt-2 text-base text-muted">{s.label}</span>
               </div>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* ===== Features ===== */}
+        <section id="features" className="w-full scroll-mt-24 pb-28">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-forest">
+              Pourquoi OperIA
+            </p>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Tout ce qu&apos;il faut pour passer à l&apos;échelle
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-lg text-muted">
+              Une plateforme pensée pour la vitesse, la collaboration et la
+              confiance.
+            </p>
+          </Reveal>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-3">
+            {features.map((f, i) => (
+              <Reveal key={f.title} delay={i * 120}>
+                <div className="group h-full rounded-3xl border border-black/5 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-forest-darker/10">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-forest-soft text-2xl text-forest transition-colors group-hover:bg-forest group-hover:text-white">
+                    {f.icon}
+                  </span>
+                  <h3 className="mt-6 text-xl font-semibold">{f.title}</h3>
+                  <p className="mt-3 leading-7 text-muted">{f.description}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </section>
 
-        {/* Waitlist */}
-        <section
-          id="waitlist"
-          className="w-full max-w-2xl scroll-mt-20 pb-28"
-        >
-          <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Rejoignez la liste d&apos;attente
-            </h2>
-            <p className="mx-auto mt-4 max-w-md text-lg text-muted">
-              Soyez parmi les premiers à assembler vos métiers IA sur OperIA.
+        {/* ===== How it works ===== */}
+        <section id="how" className="w-full scroll-mt-24 pb-28">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-forest">
+              Comment ça marche
             </p>
-          </div>
-          <div className="mt-8">
-            <WaitlistForm />
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Trois étapes, et c&apos;est parti
+            </h2>
+          </Reveal>
+
+          <div className="relative mt-16 grid gap-10 sm:grid-cols-3">
+            {/* connecting line */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-[16.6%] right-[16.6%] top-7 hidden border-t-2 border-dashed border-forest/25 sm:block"
+            />
+            {steps.map((step, i) => (
+              <Reveal key={step.n} delay={i * 140} className="relative">
+                <div className="flex flex-col items-center text-center">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full border border-forest/20 bg-beige text-lg font-bold text-forest shadow-sm">
+                    {step.n}
+                  </span>
+                  <h3 className="mt-6 text-xl font-semibold">{step.title}</h3>
+                  <p className="mt-3 max-w-xs leading-7 text-muted">
+                    {step.description}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </section>
+
+        {/* ===== Testimonial ===== */}
+        <Reveal as="section" id="testimonial" className="w-full scroll-mt-24 pb-28">
+          <div className="relative overflow-hidden rounded-[2rem] border border-black/5 bg-white px-8 py-14 shadow-sm sm:px-16 sm:py-20">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -left-2 -top-6 select-none font-serif text-[10rem] leading-none text-forest-soft"
+            >
+              &ldquo;
+            </span>
+            <blockquote className="relative mx-auto max-w-3xl text-center">
+              <p className="text-2xl font-medium leading-relaxed tracking-tight text-ink sm:text-3xl">
+                Nous avons déployé notre premier agent support en une
+                après-midi. OperIA nous a fait gagner trois semaines de
+                développement — et nos clients ne voient plus la différence avec
+                un humain.
+              </p>
+              <footer className="mt-10 flex items-center justify-center gap-4">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-forest text-lg font-bold text-white">
+                  CL
+                </span>
+                <div className="text-left">
+                  <div className="font-semibold text-ink">Camille Laurent</div>
+                  <div className="text-sm text-muted">
+                    Head of Operations, Nyx Studio
+                  </div>
+                </div>
+              </footer>
+            </blockquote>
+          </div>
+        </Reveal>
+
+        {/* ===== Waitlist ===== */}
+        <Reveal as="section" id="waitlist" className="w-full scroll-mt-24 pb-28">
+          <div className="relative overflow-hidden rounded-[2rem] bg-forest px-6 py-16 shadow-xl shadow-forest-darker/20 sm:px-16 sm:py-20">
+            {/* subtle texture blobs */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-white/10 blur-2xl"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-forest-darker/40 blur-2xl"
+            />
+            <div className="relative mx-auto grid max-w-5xl items-center gap-12 lg:grid-cols-2">
+              <div className="text-center lg:text-left">
+                <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  Rejoignez la liste d&apos;attente
+                </h2>
+                <p className="mt-4 max-w-md text-lg leading-8 text-white/80 lg:mx-0">
+                  Soyez parmi les premiers à assembler vos métiers IA sur
+                  OperIA. Accès anticipé, tarifs fondateurs et accompagnement
+                  dédié.
+                </p>
+                <ul className="mt-7 space-y-3">
+                  {[
+                    "Accès prioritaire à la bêta",
+                    "Tarif fondateur à vie",
+                    "Onboarding personnalisé",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-center justify-center gap-3 text-white/90 lg:justify-start"
+                    >
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs text-white">
+                        ✓
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <WaitlistForm />
+            </div>
+          </div>
+        </Reveal>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-black/5">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-sm text-muted sm:flex-row">
-          <span>
-            Oper<span className="text-forest">IA</span> © 2026
-          </span>
-          <span>Là où les métiers IA s&apos;assemblent.</span>
+      {/* ===== Footer ===== */}
+      <footer className="border-t border-black/5 bg-beige-deep/50">
+        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+          <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest text-lg font-bold text-white">
+                  O
+                </span>
+                <span className="text-xl font-semibold tracking-tight">
+                  Oper<span className="text-forest">IA</span>
+                </span>
+              </div>
+              <p className="mt-4 max-w-xs leading-7 text-muted">
+                Là où les métiers IA s&apos;assemblent. La plateforme qui réunit
+                créateurs et entreprises.
+              </p>
+            </div>
+
+            {[
+              {
+                title: "Produit",
+                links: ["Fonctionnalités", "Place de marché", "Tarifs", "Bêta"],
+              },
+              {
+                title: "Ressources",
+                links: ["Documentation", "Guides", "Blog", "Support"],
+              },
+              {
+                title: "Entreprise",
+                links: ["À propos", "Carrières", "Contact", "Presse"],
+              },
+            ].map((col) => (
+              <div key={col.title}>
+                <h4 className="text-sm font-semibold text-ink">{col.title}</h4>
+                <ul className="mt-4 space-y-3">
+                  {col.links.map((link) => (
+                    <li key={link}>
+                      <a
+                        href="#"
+                        className="text-sm text-muted transition-colors hover:text-forest"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-black/5 pt-8 text-sm text-muted sm:flex-row">
+            <span>
+              © 2026 Oper<span className="text-forest">IA</span>. Tous droits
+              réservés.
+            </span>
+            <div className="flex gap-6">
+              <a href="#" className="transition-colors hover:text-forest">
+                Confidentialité
+              </a>
+              <a href="#" className="transition-colors hover:text-forest">
+                Conditions
+              </a>
+              <a href="#" className="transition-colors hover:text-forest">
+                Cookies
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
