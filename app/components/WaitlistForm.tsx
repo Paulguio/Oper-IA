@@ -1,16 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [profile, setProfile] = useState<"createur" | "entreprise">("createur");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!email) return;
-    // TODO: brancher sur un vrai endpoint / service d'emailing
+    if (!email || loading) return;
+
+    setLoading(true);
+    setError(null);
+
+    const { error: insertError } = await supabase
+      .from("waitlist")
+      .insert({ email, profil: profile });
+
+    setLoading(false);
+
+    if (insertError) {
+      // Log complet pour diagnostiquer (message, code, details, hint)
+      console.error("Supabase insert error:", insertError);
+      // 23505 = violation de contrainte d'unicité (email déjà inscrit)
+      if (insertError.code === "23505") {
+        setError("Cet email est déjà sur la liste d'attente.");
+      } else {
+        setError("Une erreur est survenue. Veuillez réessayer.");
+      }
+      return;
+    }
+
     setSubmitted(true);
   }
 
@@ -70,11 +94,21 @@ export default function WaitlistForm() {
         />
         <button
           type="submit"
-          className="h-13 rounded-full bg-forest px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-forest/25 transition-all hover:bg-forest-dark hover:shadow-forest/40 active:scale-[0.98]"
+          disabled={loading}
+          className="h-13 rounded-full bg-forest px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-forest/25 transition-all hover:bg-forest-dark hover:shadow-forest/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:active:scale-100"
         >
-          Rejoindre →
+          {loading ? "Envoi…" : "Rejoindre →"}
         </button>
       </div>
+
+      {error && (
+        <p
+          role="alert"
+          className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-700 sm:text-left"
+        >
+          {error}
+        </p>
+      )}
 
       <div className="mt-6 flex items-center justify-center gap-3 sm:justify-start">
         <div className="flex -space-x-2.5">
