@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 type Agent = {
@@ -9,6 +10,7 @@ type Agent = {
   icon: string;
   description: string;
   active: boolean;
+  href?: string;
 };
 
 const AGENTS: Agent[] = [
@@ -20,6 +22,7 @@ const AGENTS: Agent[] = [
     description:
       "Audite votre site, trouve les mots-clés gagnants et rédige des contenus optimisés pour grimper dans Google.",
     active: true,
+    href: "/agents/seo",
   },
   {
     name: "Directeur Marketing IA",
@@ -219,12 +222,12 @@ function AgentCard({ agent }: { agent: Agent }) {
           <span className="text-sm font-normal text-muted">/mois</span>
         </span>
         {agent.active ? (
-          <button
-            type="button"
+          <Link
+            href={agent.href ?? "#"}
             className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-forest-dark hover:shadow-md active:scale-[0.98]"
           >
             Découvrir
-          </button>
+          </Link>
         ) : (
           <button
             type="button"
