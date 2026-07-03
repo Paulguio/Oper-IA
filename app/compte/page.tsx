@@ -9,8 +9,27 @@ import {
   SlackLogo,
 } from "../components/BrandLogos";
 import DashboardTopBar from "../components/DashboardTopBar";
+import { inputClass, Label, Select } from "../components/FormControls";
 import SectionCard from "../components/SectionCard";
+import {
+  displayName,
+  updateProfile,
+  type Profile,
+} from "@/lib/auth";
 import { useAuth } from "@/lib/useAuth";
+
+const SECTEURS = [
+  "E-commerce",
+  "Conseil / Consulting",
+  "Agence marketing",
+  "Immobilier",
+  "Finance / Comptabilité",
+  "Juridique",
+  "Technologie / SaaS",
+  "Santé",
+  "Education",
+  "Autre",
+];
 
 type Tool = {
   name: string;
@@ -28,6 +47,17 @@ export default function ComptePage() {
   const router = useRouter();
   const { loading, user, profile } = useAuth();
   const [tools, setTools] = useState<Tool[]>(INITIAL_TOOLS);
+  const [overrides, setOverrides] = useState<Partial<Profile>>({});
+
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    prenom: "",
+    nom: "",
+    entreprise: "",
+    secteur: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -46,7 +76,8 @@ export default function ComptePage() {
     );
   }
 
-  const name = profile?.nom || user.email?.split("@")[0] || "Utilisateur";
+  const current = { ...profile, ...overrides } as Profile;
+  const name = displayName(current, user.email);
 
   function toggleTool(toolName: string) {
     setTools((prev) =>
@@ -54,6 +85,33 @@ export default function ComptePage() {
         t.name === toolName ? { ...t, connected: !t.connected } : t,
       ),
     );
+  }
+
+  function startEdit() {
+    setForm({
+      prenom: current.prenom ?? "",
+      nom: current.nom ?? "",
+      entreprise: current.entreprise ?? "",
+      secteur: current.secteur ?? "",
+    });
+    setSaveError(null);
+    setEditing(true);
+  }
+
+  async function save() {
+    if (saving) return;
+    setSaving(true);
+    setSaveError(null);
+    const { error } = await updateProfile(user!.id, form);
+    setSaving(false);
+    if (error) {
+      setSaveError(
+        "Échec de l'enregistrement. Vérifiez que le script update-profiles.sql a bien été exécuté.",
+      );
+      return;
+    }
+    setOverrides((prev) => ({ ...prev, ...form }));
+    setEditing(false);
   }
 
   return (
@@ -164,27 +222,112 @@ export default function ComptePage() {
           <SectionCard
             title="Mes informations"
             action={
-              <button
-                type="button"
-                className="btn-secondary rounded-full px-4 py-2 text-sm font-semibold"
-              >
-                Modifier
-              </button>
+              !editing ? (
+                <button
+                  type="button"
+                  onClick={startEdit}
+                  className="btn-secondary rounded-full px-4 py-2 text-sm font-semibold"
+                >
+                  Modifier
+                </button>
+              ) : undefined
             }
           >
-            <dl className="divide-y divide-line">
-              <div className="flex items-center justify-between py-3 first:pt-0">
-                <dt className="text-sm text-muted">Nom</dt>
-                <dd className="font-medium text-ink">{name}</dd>
+            {!editing ? (
+              <dl className="divide-y divide-line">
+                <InfoRow label="Prénom" value={current.prenom} />
+                <InfoRow label="Nom" value={current.nom} />
+                <InfoRow label="Entreprise" value={current.entreprise} />
+                <InfoRow label="Secteur" value={current.secteur} />
+                <InfoRow label="Email" value={user.email} />
+              </dl>
+            ) : (
+              <div className="flex flex-col gap-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label htmlFor="prenom">Prénom</Label>
+                    <input
+                      id="prenom"
+                      value={form.prenom}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, prenom: e.target.value }))
+                      }
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="nom">Nom</Label>
+                    <input
+                      id="nom"
+                      value={form.nom}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, nom: e.target.value }))
+                      }
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="entreprise">Entreprise</Label>
+                  <input
+                    id="entreprise"
+                    value={form.entreprise}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, entreprise: e.target.value }))
+                    }
+                    placeholder="Votre entreprise ou nom complet"
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <Label>Secteur</Label>
+                  <Select
+                    value={form.secteur}
+                    onChange={(v) => setForm((f) => ({ ...f, secteur: v }))}
+                    placeholder="Sélectionnez…"
+                    options={SECTEURS}
+                  />
+                </div>
+
+                {saveError && (
+                  <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                    {saveError}
+                  </p>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setEditing(false)}
+                    className="btn-secondary rounded-full px-5 py-2.5 text-sm font-semibold"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    onClick={save}
+                    disabled={saving}
+                    className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold disabled:opacity-60"
+                  >
+                    {saving ? "Enregistrement…" : "Enregistrer"}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center justify-between py-3 last:pb-0">
-                <dt className="text-sm text-muted">Email</dt>
-                <dd className="font-medium text-ink">{user.email}</dd>
-              </div>
-            </dl>
+            )}
           </SectionCard>
         </div>
       </main>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0">
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="font-medium text-ink">
+        {value || <span className="text-muted/60">—</span>}
+      </dd>
     </div>
   );
 }

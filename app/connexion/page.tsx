@@ -5,30 +5,27 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AuthShell from "../components/AuthShell";
 import {
-  getProfile,
-  setAuthCookie,
-  spaceForRole,
-  type Role,
-} from "@/lib/auth";
+  Checkbox,
+  inputClass,
+  Label,
+  PasswordInput,
+} from "../components/FormControls";
+import { getProfile, setAuthCookie, spaceForRole, type Role } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
-
-const inputClass =
-  "focus-ring w-full rounded-xl border border-line bg-beige px-4 py-3 text-base text-ink transition focus:bg-white";
 
 export default function ConnexionPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
     setError(null);
-    setInfo(null);
 
     const { data, error: signInError } = await supabase.auth.signInWithPassword(
       { email, password },
@@ -38,14 +35,19 @@ export default function ConnexionPage() {
       const code = signInError.code ?? "";
       const msg = signInError.message?.toLowerCase() ?? "";
       if (code === "email_not_confirmed" || msg.includes("not confirmed")) {
-        setError(
-          "Votre email n'est pas encore confirmé. Vérifiez votre boîte mail pour activer votre compte.",
-        );
+        setError("Veuillez confirmer votre email avant de vous connecter.");
+      } else if (
+        code === "user_not_found" ||
+        msg.includes("user not found") ||
+        msg.includes("no user")
+      ) {
+        setError("Aucun compte trouvé avec cet email.");
       } else if (
         code === "invalid_credentials" ||
         msg.includes("invalid login")
       ) {
-        setError("Email ou mot de passe incorrect.");
+        // Supabase ne distingue pas email inconnu / mauvais mot de passe.
+        setError("Mot de passe incorrect, ou aucun compte pour cet email.");
       } else {
         setError("Une erreur est survenue. Veuillez réessayer.");
       }
@@ -53,7 +55,6 @@ export default function ConnexionPage() {
       return;
     }
 
-    // Connexion réussie — déterminer le rôle puis rediriger.
     const user = data.user;
     const profile = user ? await getProfile(user.id) : null;
     const role: Role =
@@ -61,7 +62,7 @@ export default function ConnexionPage() {
       ((user?.user_metadata?.role as Role) === "createur"
         ? "createur"
         : "utilisateur");
-    setAuthCookie(role);
+    setAuthCookie(role, remember);
 
     const redirect =
       typeof window !== "undefined"
@@ -69,24 +70,6 @@ export default function ConnexionPage() {
         : null;
     router.replace(redirect || spaceForRole(role));
     router.refresh();
-  }
-
-  async function handleReset() {
-    setError(null);
-    setInfo(null);
-    if (!email) {
-      setError("Saisissez d'abord votre email pour recevoir un lien.");
-      return;
-    }
-    await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo:
-        typeof window !== "undefined"
-          ? `${window.location.origin}/connexion`
-          : undefined,
-    });
-    setInfo(
-      "Si un compte existe pour cet email, un lien de réinitialisation vient d'être envoyé.",
-    );
   }
 
   return (
@@ -107,12 +90,7 @@ export default function ConnexionPage() {
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
-          <label
-            htmlFor="email"
-            className="mb-1.5 block text-sm font-medium text-ink"
-          >
-            Email
-          </label>
+          <Label htmlFor="email">Email</Label>
           <input
             id="email"
             type="email"
@@ -126,29 +104,27 @@ export default function ConnexionPage() {
         </div>
 
         <div>
-          <div className="mb-1.5 flex items-center justify-between">
-            <label htmlFor="password" className="text-sm font-medium text-ink">
-              Mot de passe
-            </label>
-            <button
-              type="button"
-              onClick={handleReset}
+          <Label htmlFor="password">Mot de passe</Label>
+          <PasswordInput
+            id="password"
+            value={password}
+            onChange={setPassword}
+            autoComplete="current-password"
+            placeholder="••••••••"
+          />
+          <div className="mt-2 text-right">
+            <Link
+              href="/mot-de-passe-oublie"
               className="text-sm font-medium text-forest hover:text-forest-dark"
             >
               Mot de passe oublié ?
-            </button>
+            </Link>
           </div>
-          <input
-            id="password"
-            type="password"
-            required
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            className={inputClass}
-          />
         </div>
+
+        <Checkbox id="remember" checked={remember} onChange={setRemember}>
+          Se souvenir de moi
+        </Checkbox>
 
         {error && (
           <p
@@ -158,18 +134,13 @@ export default function ConnexionPage() {
             {error}
           </p>
         )}
-        {info && (
-          <p className="rounded-xl bg-forest-soft px-4 py-3 text-sm font-medium text-forest-dark">
-            {info}
-          </p>
-        )}
 
         <button
           type="submit"
           disabled={loading}
           className="btn-primary w-full rounded-full px-6 py-3 text-base font-semibold disabled:cursor-not-allowed disabled:opacity-70 disabled:active:scale-100"
         >
-          {loading ? "Connexion…" : "Se connecter"}
+          {loading ? "Connexion en cours…" : "Se connecter"}
         </button>
       </form>
     </AuthShell>

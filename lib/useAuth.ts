@@ -23,10 +23,25 @@ function deriveProfile(user: User, fetched: Profile | null): Profile {
   if (fetched) return fetched;
   const meta = (user.user_metadata ?? {}) as Record<string, unknown>;
   const role: Role = meta.role === "createur" ? "createur" : "utilisateur";
+  const str = (k: string) => (typeof meta[k] === "string" ? (meta[k] as string) : null);
   return {
     id: user.id,
     role,
-    nom: typeof meta.nom === "string" ? meta.nom : null,
+    nom: str("nom"),
+    prenom: str("prenom"),
+    entreprise: str("entreprise"),
+    taille_entreprise: str("taille_entreprise"),
+    secteur: str("secteur"),
+    source: str("source"),
+    nom_marque: str("nom_marque"),
+    bio: str("bio"),
+    domaine: str("domaine"),
+    outils: Array.isArray(meta.outils) ? (meta.outils as string[]) : null,
+    lien_web: str("lien_web"),
+    conditions_acceptees:
+      typeof meta.conditions_acceptees === "boolean"
+        ? (meta.conditions_acceptees as boolean)
+        : null,
     created_at: user.created_at ?? "",
   };
 }
