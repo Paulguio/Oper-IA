@@ -125,17 +125,17 @@ export default function AgentSeoPage() {
                   Sans engagement · résiliable à tout moment.
                 </p>
 
-                <button
-                  type="button"
-                  className="mt-6 h-12 w-full rounded-full bg-forest text-base font-semibold text-white shadow-lg shadow-forest/25 transition-all hover:bg-forest-dark hover:shadow-forest/40 active:scale-[0.98]"
+                <Link
+                  href="/agents/seo/chat"
+                  className="mt-6 flex h-12 w-full items-center justify-center rounded-full bg-forest text-base font-semibold text-white shadow-lg shadow-forest/25 transition-all hover:bg-forest-dark hover:shadow-forest/40 active:scale-[0.98]"
                 >
-                  S&apos;abonner
-                </button>
+                  Démarrer une conversation →
+                </Link>
                 <button
                   type="button"
                   className="mt-3 h-12 w-full rounded-full border border-forest/25 bg-white text-base font-semibold text-forest-dark transition-all hover:bg-forest-soft active:scale-[0.98]"
                 >
-                  Essai 7 jours gratuits
+                  Essai gratuit 7 jours
                 </button>
 
                 <ul className="mt-7 space-y-3 border-t border-black/5 pt-6">
