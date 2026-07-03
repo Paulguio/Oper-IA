@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { label: "Catalogue", href: "/catalogue" },
@@ -11,15 +12,29 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname() ?? "/";
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-beige/80 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-line/80 bg-[rgba(250,248,245,0.85)] shadow-[0_1px_0_rgba(0,0,0,0.03),0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl backdrop-saturate-150"
+          : "border-b border-transparent bg-transparent"
+      }`}
+    >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest text-lg font-bold text-white shadow-sm">
+        <Link href="/" className="group flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-forest text-lg font-bold text-white shadow-[0_2px_6px_rgba(61,107,79,0.35)] transition-transform duration-300 group-hover:scale-105">
             O
           </span>
           <span className="text-xl font-semibold tracking-tight">
@@ -34,17 +49,15 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                data-active={active}
                 aria-current={active ? "page" : undefined}
-                className={`relative transition-colors ${
+                className={`nav-link transition-colors ${
                   active
                     ? "font-semibold text-forest"
                     : "text-muted hover:text-ink"
                 }`}
               >
                 {link.label}
-                {active && (
-                  <span className="absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-forest" />
-                )}
               </Link>
             );
           })}
@@ -59,7 +72,7 @@ export default function Header() {
           </Link>
           <Link
             href="/inscription"
-            className="rounded-full bg-forest px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-forest-dark hover:shadow-md active:scale-[0.98]"
+            className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold"
           >
             S&apos;inscrire
           </Link>

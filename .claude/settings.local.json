@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "Bash(git --version)",
+      "Bash(git config *)",
+      "Bash(security find-internet-password *)",
+      "Bash(git ls-remote *)",
+      "Bash(npm -v)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(npx tsc *)",
+      "Bash(kill %1)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(echo \"=== BUILD EXIT $? ===\")",
+      "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --disable-gpu --hide-scrollbars --window-size=1280,1400 --screenshot=/private/tmp/claude-501/-Users-paulguionet--wwwroot-Operia/080d4862-c540-47c6-85a9-4bb26d05788e/scratchpad/bottom.png 'http://localhost:3000/#waitlist')",
+      "Bash(echo \"exit $?\")",
+      "Bash(sips -g pixelWidth -g pixelHeight /private/tmp/claude-501/-Users-paulguionet--wwwroot-Operia/080d4862-c540-47c6-85a9-4bb26d05788e/scratchpad/bottom.png)"
+    ]
+  }
+}

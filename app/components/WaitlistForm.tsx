@@ -58,7 +58,7 @@ export default function WaitlistForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-3xl border border-black/5 bg-white p-7 shadow-xl shadow-forest-darker/10 sm:p-9"
+      className="rounded-3xl border border-line bg-white p-7 shadow-[var(--shadow-card-hover)] sm:p-9"
     >
       <div className="mb-6 flex gap-1.5 rounded-full bg-beige-deep p-1.5">
         {(
@@ -90,12 +90,12 @@ export default function WaitlistForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="votre@email.com"
           aria-label="Adresse email"
-          className="h-13 flex-1 rounded-full border border-black/10 bg-beige px-5 py-3.5 text-base text-ink outline-none transition focus:border-forest focus:bg-white focus:ring-4 focus:ring-forest/15"
+          className="focus-ring h-13 flex-1 rounded-full border border-line bg-beige px-5 py-3.5 text-base text-ink transition focus:bg-white"
         />
         <button
           type="submit"
           disabled={loading}
-          className="h-13 rounded-full bg-forest px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-forest/25 transition-all hover:bg-forest-dark hover:shadow-forest/40 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 disabled:active:scale-100"
+          className="btn-primary h-13 rounded-full px-8 py-3.5 text-base font-semibold disabled:cursor-not-allowed disabled:opacity-70 disabled:active:scale-100"
         >
           {loading ? "Envoi…" : "Rejoindre →"}
         </button>
@@ -112,7 +112,7 @@ export default function WaitlistForm() {
 
       <div className="mt-6 flex items-center justify-center gap-3 sm:justify-start">
         <div className="flex -space-x-2.5">
-          {["#4a7c59", "#3c6649", "#5d6b62", "#2f4f39"].map((c, i) => (
+          {["#3d6b4f", "#2e5440", "#6b6b6b", "#24422f"].map((c, i) => (
             <span
               key={i}
               className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white text-[10px] font-bold text-white"

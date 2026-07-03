@@ -27,6 +27,7 @@ export default function Reveal({
 
     // Respect reduced-motion preferences.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync to a media query on mount
       setVisible(true);
       return;
     }
