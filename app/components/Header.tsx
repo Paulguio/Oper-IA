@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { spaceForRole } from "@/lib/auth";
+import { signOut, useAuth } from "@/lib/useAuth";
 
 const navLinks = [
   { label: "Catalogue", href: "/catalogue" },
@@ -12,7 +14,9 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname() ?? "/";
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
+  const { loading, user, profile } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -23,6 +27,16 @@ export default function Header() {
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
+
+  async function handleLogout() {
+    await signOut();
+    router.replace("/");
+    router.refresh();
+  }
+
+  const role = profile?.role ?? "utilisateur";
+  const spaceHref = spaceForRole(role);
+  const spaceLabel = role === "createur" ? "Mon espace" : "Mon compte";
 
   return (
     <header
@@ -64,18 +78,38 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-1.5 sm:gap-2.5">
-          <Link
-            href="/connexion"
-            className="rounded-full px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:text-forest"
-          >
-            Connexion
-          </Link>
-          <Link
-            href="/inscription"
-            className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold"
-          >
-            S&apos;inscrire
-          </Link>
+          {!loading && user ? (
+            <>
+              <Link
+                href={spaceHref}
+                className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold"
+              >
+                {spaceLabel}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-full px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:text-forest"
+              >
+                Déconnexion
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/connexion"
+                className="rounded-full px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:text-forest"
+              >
+                Connexion
+              </Link>
+              <Link
+                href="/inscription"
+                className="btn-primary rounded-full px-5 py-2.5 text-sm font-semibold"
+              >
+                S&apos;inscrire
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

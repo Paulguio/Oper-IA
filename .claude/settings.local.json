@@ -17,7 +17,12 @@
       "Bash(echo \"=== BUILD EXIT $? ===\")",
       "Bash('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' --headless=new --disable-gpu --hide-scrollbars --window-size=1280,1400 --screenshot=/private/tmp/claude-501/-Users-paulguionet--wwwroot-Operia/080d4862-c540-47c6-85a9-4bb26d05788e/scratchpad/bottom.png 'http://localhost:3000/#waitlist')",
       "Bash(echo \"exit $?\")",
-      "Bash(sips -g pixelWidth -g pixelHeight /private/tmp/claude-501/-Users-paulguionet--wwwroot-Operia/080d4862-c540-47c6-85a9-4bb26d05788e/scratchpad/bottom.png)"
+      "Bash(sips -g pixelWidth -g pixelHeight /private/tmp/claude-501/-Users-paulguionet--wwwroot-Operia/080d4862-c540-47c6-85a9-4bb26d05788e/scratchpad/bottom.png)",
+      "Bash(curl -s -m 15 -o /dev/null -w \"npm registry HTTP %{http_code} in %{time_total}s\\\\n\" https://registry.npmjs.org/@supabase%2fssr)",
+      "Bash(curl -s -m 15 -o /dev/null -w \"github HTTP %{http_code}\\\\n\" https://github.com)",
+      "Bash(node -p \"require\\('@supabase/ssr/package.json'\\).version\")",
+      "Bash(echo \"ssr INSTALLED: $\\(node -p \"require\\('@supabase/ssr/package.json'\\).version\"\\)\")",
+      "Bash(pkill -f \"next-server\")"
     ]
   }
 }
