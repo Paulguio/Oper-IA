@@ -15,8 +15,7 @@ import {
 import PasswordStrength, {
   isPasswordValid,
 } from "../components/PasswordStrength";
-import { setAuthCookie, spaceForRole, type Role } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
+import { spaceForRole, type Role } from "@/lib/auth";
 
 const ROLES: {
   value: Role;
@@ -107,7 +106,6 @@ export default function InscriptionPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const emailValid = EMAIL_RE.test(email);
   const confirmMatch = confirm.length > 0 && confirm === password;
@@ -160,76 +158,31 @@ export default function InscriptionPage() {
             source,
           };
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: meta,
-        emailRedirectTo:
-          typeof window !== "undefined"
-            ? `${window.location.origin}/connexion`
-            : undefined,
-      },
-    });
-
-    if (signUpError) {
-      const code = signUpError.code ?? "";
-      const msg = signUpError.message?.toLowerCase() ?? "";
-      if (
-        code === "user_already_exists" ||
-        msg.includes("already registered") ||
-        msg.includes("already been registered")
-      ) {
-        setError("Cet email est déjà utilisé. Essayez de vous connecter.");
-      } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
-      }
+    let res: Response | null = null;
+    try {
+      res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, ...meta }),
+      });
+    } catch {
+      setError("Impossible de contacter le serveur. Réessayez.");
       setLoading(false);
       return;
     }
 
-    if (data.user && data.user.identities && data.user.identities.length === 0) {
-      setError("Cet email est déjà utilisé. Essayez de vous connecter.");
+    if (!res.ok) {
+      setError(
+        res.status === 409
+          ? "Cet email est déjà utilisé. Essayez de vous connecter."
+          : "Une erreur est survenue. Veuillez réessayer.",
+      );
       setLoading(false);
       return;
     }
 
-    if (data.session) {
-      setAuthCookie(role);
-      router.replace(spaceForRole(role));
-      router.refresh();
-      return;
-    }
-
-    setSuccess(
-      "Compte créé ! Vérifiez votre boîte mail pour confirmer votre adresse, puis connectez-vous.",
-    );
-    setLoading(false);
-  }
-
-  // ---- Écran de confirmation ----
-  if (success) {
-    return (
-      <AuthShell
-        title="Presque terminé"
-        subtitle="Une dernière étape avant de démarrer."
-        footer={
-          <Link
-            href="/connexion"
-            className="font-semibold text-forest hover:text-forest-dark"
-          >
-            Aller à la connexion
-          </Link>
-        }
-      >
-        <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-forest-soft text-2xl text-forest">
-            ✓
-          </div>
-          <p className="mt-5 leading-7 text-muted">{success}</p>
-        </div>
-      </AuthShell>
-    );
+    router.replace(spaceForRole(role));
+    router.refresh();
   }
 
   const title = step === 1 ? "Vos informations" : "Votre profil";

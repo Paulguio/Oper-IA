@@ -1,0 +1,52 @@
+# =====================================================================
+# OperIA — Environnement local : UN container Postgres + le web Next.js
+#   docker compose up -d --build
+#   docker compose down            (ajouter -v pour effacer la base)
+# =====================================================================
+
+services:
+  db:
+    image: postgres:16
+    container_name: operia-db
+    environment:
+      POSTGRES_USER: operia
+      POSTGRES_PASSWORD: operia
+      POSTGRES_DB: operia
+    ports:
+      - "5432:5432"
+    volumes:
+      - operia-db-data:/var/lib/postgresql/data
+      # Schéma appliqué au 1er démarrage (base vide).
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U operia -d operia"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  web:
+    container_name: operia-web
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - .env.docker
+      # Secrets non versionnés (gitignoré) — notamment ANTHROPIC_API_KEY.
+      - .env.local
+    environment:
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+    restart: unless-stopped
+
+volumes:
+  operia-db-data:

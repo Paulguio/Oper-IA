@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const AUTH_COOKIE = "operia-auth";
+const AUTH_COOKIE = "operia_session";
 
 /**
  * Protège les espaces personnels : tout accès à /compte ou /createur

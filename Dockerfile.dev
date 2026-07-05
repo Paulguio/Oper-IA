@@ -1,0 +1,17 @@
+# Container web Next.js — mode développement (hot reload)
+FROM node:24-slim
+
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Dépendances installées DANS l'image (Linux) — indépendantes du node_modules
+# de l'hôte (macOS/arm). Peuplent le volume anonyme /app/node_modules au 1er run.
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Le code source est monté en volume par docker-compose (hot reload) ;
+# cette copie rend l'image autonome si lancée sans volume.
+COPY . .
+
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

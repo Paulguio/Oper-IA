@@ -4,20 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AuthShell from "../components/AuthShell";
-import {
-  Checkbox,
-  inputClass,
-  Label,
-  PasswordInput,
-} from "../components/FormControls";
-import { getProfile, setAuthCookie, spaceForRole, type Role } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
+import { inputClass, Label, PasswordInput } from "../components/FormControls";
+import { spaceForRole, type Role } from "@/lib/auth";
 
 export default function ConnexionPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,43 +20,31 @@ export default function ConnexionPage() {
     setLoading(true);
     setError(null);
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword(
-      { email, password },
-    );
-
-    if (signInError) {
-      const code = signInError.code ?? "";
-      const msg = signInError.message?.toLowerCase() ?? "";
-      if (code === "email_not_confirmed" || msg.includes("not confirmed")) {
-        setError("Veuillez confirmer votre email avant de vous connecter.");
-      } else if (
-        code === "user_not_found" ||
-        msg.includes("user not found") ||
-        msg.includes("no user")
-      ) {
-        setError("Aucun compte trouvé avec cet email.");
-      } else if (
-        code === "invalid_credentials" ||
-        msg.includes("invalid login")
-      ) {
-        // Supabase ne distingue pas email inconnu / mauvais mot de passe.
-        setError("Mot de passe incorrect, ou aucun compte pour cet email.");
-      } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
-      }
+    let res: Response;
+    try {
+      res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+    } catch {
+      setError("Impossible de contacter le serveur. Réessayez.");
       setLoading(false);
       return;
     }
 
-    const user = data.user;
-    const profile = user ? await getProfile(user.id) : null;
-    const role: Role =
-      profile?.role ??
-      ((user?.user_metadata?.role as Role) === "createur"
-        ? "createur"
-        : "utilisateur");
-    setAuthCookie(role, remember);
+    if (!res.ok) {
+      setError(
+        res.status === 401
+          ? "Email ou mot de passe incorrect."
+          : "Une erreur est survenue. Veuillez réessayer.",
+      );
+      setLoading(false);
+      return;
+    }
 
+    const data = await res.json();
+    const role: Role = data.user?.role === "createur" ? "createur" : "utilisateur";
     const redirect =
       typeof window !== "undefined"
         ? new URLSearchParams(window.location.search).get("redirect")
@@ -121,10 +102,6 @@ export default function ConnexionPage() {
             </Link>
           </div>
         </div>
-
-        <Checkbox id="remember" checked={remember} onChange={setRemember}>
-          Se souvenir de moi
-        </Checkbox>
 
         {error && (
           <p

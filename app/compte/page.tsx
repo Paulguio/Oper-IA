@@ -12,7 +12,6 @@ import {
 import DashboardTopBar from "../components/DashboardTopBar";
 import { inputClass, Label, Select } from "../components/FormControls";
 import { displayName, updateProfile, type Profile } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
 import { signOut, useAuth } from "@/lib/useAuth";
 
 /* ------------------------------------------------------------------ */
@@ -566,20 +565,15 @@ function TabProfil({
   }
 
   async function handlePasswordReset() {
-    if (resetting || !email) return;
+    if (resetting) return;
     setResetting(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo:
-        typeof window !== "undefined"
-          ? `${window.location.origin}/connexion`
-          : undefined,
-    });
+    // Auth locale (Postgres) sans service d'email : réinitialisation par lien
+    // indisponible. Voir docs/spécifications pour rebrancher un service mail.
+    onToast(
+      "error",
+      "Réinitialisation par email indisponible dans cette configuration.",
+    );
     setResetting(false);
-    if (error) {
-      onToast("error", "Impossible d'envoyer l'email. Réessayez.");
-    } else {
-      onToast("success", "Email de réinitialisation envoyé ✓");
-    }
   }
 
   async function handleDelete() {
@@ -695,7 +689,7 @@ function TabProfil({
               Changer de mot de passe
             </h2>
             <p className="mt-1 text-sm text-muted">
-              Un lien de réinitialisation sera envoyé à {email}.
+              Compte : {email}. Réinitialisation par email bientôt disponible.
             </p>
           </div>
           <button

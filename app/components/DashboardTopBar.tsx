@@ -1,20 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signOut } from "@/lib/useAuth";
 
 export default function DashboardTopBar({ name }: { name: string }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   async function handleLogout() {
     if (loading) return;
     setLoading(true);
     await signOut();
-    router.replace("/");
-    router.refresh();
+    window.location.href = "/";
   }
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { spaceForRole } from "@/lib/auth";
 import { signOut, useAuth } from "@/lib/useAuth";
@@ -14,7 +14,6 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname() ?? "/";
-  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const { loading, user, profile } = useAuth();
 
@@ -30,8 +29,7 @@ export default function Header() {
 
   async function handleLogout() {
     await signOut();
-    router.replace("/");
-    router.refresh();
+    window.location.href = "/";
   }
 
   const role = profile?.role ?? "utilisateur";

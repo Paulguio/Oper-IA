@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 export default function WaitlistForm() {
   const [email, setEmail] = useState("");
@@ -17,17 +16,23 @@ export default function WaitlistForm() {
     setLoading(true);
     setError(null);
 
-    const { error: insertError } = await supabase
-      .from("waitlist")
-      .insert({ email, profil: profile });
+    let res: Response | null = null;
+    try {
+      res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, profile }),
+      });
+    } catch {
+      setLoading(false);
+      setError("Une erreur est survenue. Veuillez réessayer.");
+      return;
+    }
 
     setLoading(false);
 
-    if (insertError) {
-      // Log complet pour diagnostiquer (message, code, details, hint)
-      console.error("Supabase insert error:", insertError);
-      // 23505 = violation de contrainte d'unicité (email déjà inscrit)
-      if (insertError.code === "23505") {
+    if (!res.ok) {
+      if (res.status === 409) {
         setError("Cet email est déjà sur la liste d'attente.");
       } else {
         setError("Une erreur est survenue. Veuillez réessayer.");
